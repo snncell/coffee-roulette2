@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>커피룰렛☕</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5efe6;
+}
+
+header {
+  background: #6f4e37;
+  color: white;
+  padding: 18px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 16px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+select {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background: #6f4e37;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 3px 3px 0 0;
+  background: #eee;
+  border-radius: 6px;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>☕ 커피룰렛</header>
+
+<div class="container">
+
+  <div class="filters">
+    <select id="distance">
+      <option value="">거리</option>
+      <option value="near">가까움 (5~7분)</option>
+      <option value="mid">중간 (10~15분)</option>
+      <option value="far">멀음 (울프소셜클럽급)</option>
+    </select>
+
+    <select id="outdoor">
+      <option value="">야외석</option>
+      <option value="true">있음</option>
+      <option value="false">없음</option>
+    </select>
+
+    <select id="size">
+      <option value="">매장 크기</option>
+      <option value="small">좁음</option>
+      <option value="medium">보통</option>
+      <option value="large">넓음</option>
+    </select>
+
+    <select id="vibe">
+      <option value="">분위기</option>
+      <option value="감성">감성</option>
+      <option value="힙">힙</option>
+      <option value="조용">조용</option>
+    </select>
+  </div>
+
+  <button onclick="recommend()">🎯 그냥 골라줘</button>
+
+  <div id="result"></div>
+
+</div>
+
+<script>
+const cafes = [
+  {
+    name: "minimize",
+    distance: "near",
+    outdoor: false,
+    size: "small",
+    coffee: 4,
+    dessert: 5,
+    vibe: "감성",
+    map: "https://map.naver.com/v5/search/minimize%20이태원"
+  },
+  {
+    name: "Champ Coffee",
+    distance: "near",
+    outdoor: false,
+    size: "small",
+    coffee: 5,
+    dessert: 3,
+    vibe: "힙",
+    map: "https://map.naver.com/v5/search/Champ%20Coffee%20이태원"
+  },
+  {
+    name: "Cozy Villa",
+    distance: "mid",
+    outdoor: true,
+    size: "medium",
+    coffee: 4,
+    dessert: 4,
+    vibe: "감성",
+    map: "https://map.naver.com/v5/search/Cozy%20Villa%20이태원"
+  },
+  {
+    name: "Maxim Plant",
+    distance: "far",
+    outdoor: true,
+    size: "large",
+    coffee: 4,
+    dessert: 4,
+    vibe: "힙",
+    map: "https://map.naver.com/v5/search/맥심플랜트%20이태원"
+  },
+  {
+    name: "Berkeley Coffee",
+    distance: "mid",
+    outdoor: false,
+    size: "medium",
+    coffee: 5,
+    dessert: 3,
+    vibe: "조용",
+    map: "https://map.naver.com/v5/search/Berkeley%20Coffee%20이태원"
+  }
+];
+
+// 배열 섞기
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function recommend() {
+  const distance = document.getElementById("distance").value;
+  const outdoor = document.getElementById("outdoor").value;
+  const size = document.getElementById("size").value;
+  const vibe = document.getElementById("vibe").value;
+
+  let filtered = cafes.filter(cafe => {
+    return (!distance || cafe.distance === distance) &&
+           (!outdoor || cafe.outdoor.toString() === outdoor) &&
+           (!size || cafe.size === size) &&
+           (!vibe || cafe.vibe === vibe);
+  });
+
+  if (filtered.length === 0) {
+    document.getElementById("result").innerHTML = "😢 조건에 맞는 카페 없음";
+    return;
+  }
+
+  // 섞고 최대 3개 보여주기
+  const picks = shuffle(filtered).slice(0, 3);
+
+  document.getElementById("result").innerHTML = picks.map(cafe => `
+    <div class="card" onclick="window.open('${cafe.map}')">
+      <h3>${cafe.name}</h3>
+      <div>
+        <span class="tag">☕ ${cafe.coffee}</span>
+        <span class="tag">🍰 ${cafe.dessert}</span>
+        <span class="tag">${cafe.vibe}</span>
+        <span class="tag">${cafe.size}</span>
+        <span class="tag">${cafe.outdoor ? "야외석" : "실내"}</span>
+      </div>
+    </div>
+  `).join("");
+}
+</script>
+
+</body>
+</html>
