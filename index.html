@@ -2,11 +2,13 @@
 
 let cafes = [];
 
+// 구글시트 데이터 불러오기
 async function loadData() {
   const res = await fetch("https://opensheet.elk.sh/1hrK3tneA-m4Ltl9vmIdFn4rtj1HmZMxmfrIsZNOnbrE/cafes");
   cafes = await res.json();
 }
 
+// 추천 기능
 function recommend() {
   if (cafes.length === 0) {
     alert("데이터 로딩중...");
@@ -30,6 +32,7 @@ function recommend() {
     return;
   }
 
+  // 랜덤 3개 추천
   const picks = filtered.sort(() => 0.5 - Math.random()).slice(0, 3);
 
   document.getElementById("result").innerHTML = picks.map(cafe => `
@@ -40,6 +43,7 @@ function recommend() {
   `).join("");
 }
 
+// 페이지 로드 시 실행
 loadData();
 
 </script>
